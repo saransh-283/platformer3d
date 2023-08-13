@@ -9,6 +9,9 @@ public class PlayerMovement : MonoBehaviour
     public float jumpSpeed;
     public float jumpButtonGracePeriod;
 
+    [SerializeField]
+    private Transform cameraTransform;
+
     private Animator animator;
     private CharacterController characterController;
     private float ySpeed;
@@ -39,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
 
         animator.SetFloat("InputMagnitude", inputMagnitude, 0.05f, Time.deltaTime);
         float speed = inputMagnitude;
+        movementDirection = Quaternion.AngleAxis(cameraTransform.eulerAngles.y, Vector3.up) * movementDirection;
         movementDirection.Normalize(); 
 
         ySpeed += Physics.gravity.y * Time.deltaTime;
@@ -78,6 +82,20 @@ public class PlayerMovement : MonoBehaviour
             Quaternion toRotation = Quaternion.LookRotation(movementDirection, Vector3.up);
             
             transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+        }
+    }
+
+    private void OnApplicationFocus(bool focus)
+    {
+        if (focus)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            //Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            //Cursor.visible = true;
         }
     }
 }

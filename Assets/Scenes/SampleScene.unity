@@ -1052,7 +1052,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aee476e174feebd46aca0d2b4930c04f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maximumSpeed: 3
   rotationSpeed: 720
   jumpSpeed: 0
   jumpButtonGracePeriod: 0
@@ -1071,11 +1070,11 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1078969466}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
+  m_Avatar: {fileID: 9000000, guid: 1d722e1bcf45cb146bf1519d00979d96, type: 3}
   m_Controller: {fileID: 9100000, guid: 6408f2963ec7c674c96f7334c337bddf, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 

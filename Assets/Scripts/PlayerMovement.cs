@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float maximumSpeed;
     public float rotationSpeed;
     public float jumpSpeed;
     public float jumpButtonGracePeriod;
@@ -41,7 +40,6 @@ public class PlayerMovement : MonoBehaviour
         }
 
         animator.SetFloat("InputMagnitude", inputMagnitude, 0.05f, Time.deltaTime);
-        float speed = inputMagnitude;
         movementDirection = Quaternion.AngleAxis(cameraTransform.eulerAngles.y, Vector3.up) * movementDirection;
         movementDirection.Normalize(); 
 
@@ -73,16 +71,27 @@ public class PlayerMovement : MonoBehaviour
             characterController.stepOffset = 0;
         }
 
-        Vector3 velocity = movementDirection * maximumSpeed * speed;
-        velocity.y = ySpeed;
-        characterController.Move(velocity * Time.deltaTime);        
+               
 
         if (movementDirection != Vector3.zero)
         {
+            animator.SetBool("IsMoving", true);
             Quaternion toRotation = Quaternion.LookRotation(movementDirection, Vector3.up);
             
             transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
         }
+        else
+        {
+            animator.SetBool("IsMoving", false);
+        }
+    }
+
+    private void OnAnimatorMove()
+    {
+        Vector3 velocity = animator.deltaPosition;
+        velocity.y = ySpeed * Time.deltaTime;
+
+        characterController.Move(velocity);
     }
 
     private void OnApplicationFocus(bool focus)
@@ -90,12 +99,10 @@ public class PlayerMovement : MonoBehaviour
         if (focus)
         {
             Cursor.lockState = CursorLockMode.Locked;
-            //Cursor.visible = false;
         }
         else
         {
             Cursor.lockState = CursorLockMode.None;
-            //Cursor.visible = true;
         }
     }
 }

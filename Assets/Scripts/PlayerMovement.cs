@@ -11,12 +11,17 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private Transform cameraTransform;
 
+    [SerializeField]
+    private float jumpHorizontalSpeed;
+
     private Animator animator;
     private CharacterController characterController;
     private float ySpeed;
     private float originalStepOffset;
     private float? lastGroundedTime;
     private float? jumpButtonPressedTime;
+    private bool isJumping;
+    private bool isGrounded;
     // Start is called before the first frame update
     void Start()
     {
@@ -59,9 +64,17 @@ public class PlayerMovement : MonoBehaviour
         {
             characterController.stepOffset = originalStepOffset;
             ySpeed = -0.5f;
+            animator.SetBool("IsGrounded", true);
+            isGrounded = true;
+            animator.SetBool("IsJumping", false);
+            isJumping = false;
+            animator.SetBool("IsFalling", false);
+
             if (Time.time - jumpButtonPressedTime <= jumpButtonGracePeriod)
             {
                 ySpeed = jumpSpeed;
+                animator.SetBool("IsJumping", true);
+                isJumping = true;
                 jumpButtonPressedTime = null;
                 lastGroundedTime = null;
             }
@@ -69,6 +82,13 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             characterController.stepOffset = 0;
+            animator.SetBool("IsGrounded", false);
+            isGrounded = false;
+
+            if ((isJumping && ySpeed < 0) || ySpeed < -2)
+            {
+                  animator.SetBool("IsFalling", true);
+            }
         }
 
                
@@ -84,14 +104,25 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.SetBool("IsMoving", false);
         }
+
+        if (!isGrounded)
+        {
+            Vector3 velocity = movementDirection * jumpHorizontalSpeed * inputMagnitude;
+            velocity.y = ySpeed;
+
+            characterController.Move(velocity * Time.deltaTime);
+        }
     }
 
     private void OnAnimatorMove()
     {
-        Vector3 velocity = animator.deltaPosition;
-        velocity.y = ySpeed * Time.deltaTime;
+        if (isGrounded)
+        {
+            Vector3 velocity = animator.deltaPosition;
+            velocity.y = ySpeed * Time.deltaTime;
 
-        characterController.Move(velocity);
+            characterController.Move(velocity);
+        }
     }
 
     private void OnApplicationFocus(bool focus)

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEditor;
 
 public class WaypointPath : MonoBehaviour
 {
@@ -25,10 +24,12 @@ public class WaypointPath : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+#if UNITY_EDITOR
         if (IsWaypointSelected())
         {
             DrawWaypointGizmos();
         }
+#endif
     }
 
     public void DrawWaypointGizmos()
@@ -50,17 +51,19 @@ public class WaypointPath : MonoBehaviour
 
     private bool IsWaypointSelected()
     {
-        if(Selection.transforms.Contains(transform))
+#if UNITY_EDITOR
+        if (UnityEditor.Selection.transforms.Contains(transform))
         {
             return true;
         }
         foreach (Transform child in transform)
         {
-            if (Selection.transforms.Contains(child))
+            if (UnityEditor.Selection.transforms.Contains(child))
             {
                 return true;
             }
         }
+#endif
         return false;
     }
 }
